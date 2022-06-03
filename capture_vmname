@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+VMLIST=$(vmrun list)
+# Awk multi character delimiter
+# Break on the ': ' preceding number, and also break on the LF and forward slash of directory name.
+VMCOUNT=$(echo "$VMLIST" | awk -F': |[[:blank:]]/' '{print $2}' )
+
+if [[ $VMCOUNT == "1" ]]; then
+  VMDETECTED=$(echo "$VMLIST" | awk 'NR==2 {print $0}')
+  echo .vname: "$VMDETECTED"
+  echo "$VMDETECTED" > .vmname
+else
+  echo Could not determine the path of a single running VM.
+  echo
+  echo "$VMLIST"
+  exit 1
+fi

@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+#
+# Default VMware snapshot is set to RTM ("revert to me") if no argument supplied
+
+if [ -f ".vmname" ]; then
+  VMX=$(<.vmname)
+else
+  echo Cannot determine path to VM. Run capture_vmname to generate.
+  exit 1
+fi
+
+if [ $# -ne 0 ] ; then
+  SNAPSHOT=$1
+else
+  SNAPSHOT="RTM"
+fi
+
+vmrun revertToSnapshot "$VMX" "$SNAPSHOT"
+vmrun start "$VMX"

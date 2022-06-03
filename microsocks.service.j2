@@ -1,0 +1,14 @@
+[Unit]
+Description=MicroSocks SOCKS5 service
+Wants=network-online.target
+After=network.target network-online.target
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+[Service]
+ExecStart=/usr/local/bin/microsocks -1 -i 0.0.0.0 -p {{ socks_port }} -u {{ socks_uname }} -P {{ socks_pwd }}
+Restart=on-failure
+RestartSec=3s
+
+[Install]
+WantedBy=multi-user.target

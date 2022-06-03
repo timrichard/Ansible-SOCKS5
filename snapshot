@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+DEFAULT_SNAPSHOT="RTM" # "revert to me"
+
+if [ -f ".vmname" ]; then
+  VMX=$(<.vmname)
+else
+  echo Cannot determine path to VM. Run capture_vmname to generate.
+  exit 1
+fi
+
+RUNNING_VMS=$(vmrun list)
+if [[ "$RUNNING_VMS" =~ .*"$VMX".* ]]; then
+  vmrun suspend "$VMX"
+fi
+
+SNAPSHOT_LIST=$(vmrun listSnapshots "$VMX")
+if [[ "$SNAPSHOT_LIST" =~ [[:space:]]"$DEFAULT_SNAPSHOT"$ ]]; then
+  echo Deleting previous snapshot...
+  vmrun deleteSnapshot "$VMX" "$DEFAULT_SNAPSHOT"
+fi
+
+vmrun snapshot "$VMX" "$DEFAULT_SNAPSHOT"
+
+vmrun start "$VMX"
