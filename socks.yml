@@ -18,7 +18,9 @@
       ansible.builtin.stat:
         path: '/usr/local/bin/microsocks'
       register: microsocks
-    - block:
+    - name: Building microsocks block
+      when: not microsocks.stat.exists
+      block:
         - name: Git clone microsocks
           ansible.builtin.git:
             repo: 'https://github.com/rofl0r/microsocks'
@@ -28,20 +30,21 @@
           ansible.builtin.make:
             chdir: /usr/local/src/microsocks
             target: install
-      when: not microsocks.stat.exists
     - name: Check if microsocks systemd service present
       ansible.builtin.stat:
         path: '/etc/systemd/system/microsocks.service'
       register: microsocks_systemd
-    - block:
+    - name: Managing microsocks systemd service block
+      when: not microsocks_systemd.stat.exists
+      block:
         - name: Generate the systemd microsocks service file
           ansible.builtin.template:
             src: microsocks.service.j2
             dest: /etc/systemd/system/microsocks.service
-            mode: 0644
+            mode: '0644'
         - name: Enable and start the microsocks service
           ansible.builtin.systemd:
             name: microsocks
             enabled: true
             state: started
-      when: not microsocks_systemd.stat.exists
+

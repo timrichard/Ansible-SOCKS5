@@ -1,3 +1,4 @@
 .vmname
 *.code-workspace
+.vscode/
 secrets.yml
