@@ -26,3 +26,11 @@
     - wget
     - tree
     - nginx
+
+- name: Ensure APT packages that are systemd services are enabled
+  ansible.builtin.systemd:
+    name: '{{ item }}'
+    state: started
+    enabled: true
+  loop:
+    - nginx
