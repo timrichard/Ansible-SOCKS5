@@ -1,0 +1,9 @@
+---
+- name: Setup SOCKS5 server using microsocks
+  hosts: all
+  vars_files:
+    - ./secrets.yml
+  become: true
+  tasks:
+    - name: Ensure microsocks is present and working
+      ansible.builtin.import_tasks: tasks/socks.yml
