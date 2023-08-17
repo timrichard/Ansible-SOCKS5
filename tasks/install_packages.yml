@@ -1,0 +1,28 @@
+---
+- name: Get Debian codename
+  ansible.builtin.command: "awk -F= '/VERSION_CODENAME/{print $2}' /etc/os-release"
+  register: codename
+  changed_when: false
+
+- name: Ensure backports repository is enabled
+  ansible.builtin.lineinfile:
+    path: /etc/apt/sources.list
+    line: 'deb http://deb.debian.org/debian {{ codename.stdout }}-backports main non-free-firmware'
+    state: present
+
+- name: Update repositories cache
+  ansible.builtin.apt:
+    update_cache: true
+  changed_when: false
+
+- name: Ensure packages from the main repository are installed
+  ansible.builtin.apt:
+    name: '{{ item }}'
+    state: present
+  loop:
+    - sudo
+    - vim
+    - curl
+    - wget
+    - tree
+    - nginx
